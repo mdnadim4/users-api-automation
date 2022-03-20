@@ -1,3 +1,4 @@
 node_modules
 Reports
 package-lock.json
+.gitignore
