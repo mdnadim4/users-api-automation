@@ -2,8 +2,8 @@ const newman = require('newman')
 
 newman.run(
 	{
-		collection: require('./Users_API_Collection.json'),
-		environment: require('./Users_API_Environment.json'),
+		collection: require('./Collection/Users_API_Collection.json'),
+		environment: require('./Collection/Users_API_Environment.json'),
 		iterationCount: 1,
 		reporters: 'htmlextra',
 		reporter: {
