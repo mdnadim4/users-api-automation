@@ -1,0 +1,747 @@
+{
+	"info": {
+		"_postman_id": "da1f47fe-b061-44a3-8db7-0d73a29be428",
+		"name": "Users API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = pm.response.json();\r",
+							"\r",
+							"pm.collectionVariables.set(\"token\", jsonData.token);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check if login successfully\", function() {\r",
+							"\tpm.expect(jsonData.message).to.eql(\"Login successfully\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"salmansrabon@gmail.com\",\r\n    \"password\":\"1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User List",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check if display all user list\", function() {\r",
+							"\tpm.expect(jsonData.message).to.eql(\"User list\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "X-AUTH-SECRET-KEY",
+						"value": "{{secret-key}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/user/list",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Search",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check if user list type array\", function() {\r",
+							"\tpm.expect(jsonData.user).to.be.an(\"object\");\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "X-AUTH-SECRET-KEY",
+						"value": "{{secret-key}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/user/search?email=salmansrabon@gmail.com",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"search"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "salmansrabon@gmail.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create New User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var nid = _.random(1000000000,9999999999);\r",
+							"\r",
+							"const reqObject = {\r",
+							"\turl: \"https://randomuser.me/api\",\r",
+							"\tmethod: \"GET\",\r",
+							"\theader: \"Content-Type:application/json\"\r",
+							"};\r",
+							"\r",
+							"pm.sendRequest(reqObject, (err, res) => {\r",
+							"\tlet { results } = res.json();\r",
+							"\tlet name = `${results[0].name.first} ${results[0].name.last}`;\r",
+							"\tlet email = results[0].email;\r",
+							"\tlet phone_number = results[0].phone;\r",
+							"\tlet password = pm.variables.replaceIn(\"{{$randomPassword}}\");\r",
+							"\tlet role = \"Customer\";\r",
+							"\r",
+							"\tpm.collectionVariables.set(\"name\", name);\r",
+							"\tpm.collectionVariables.set(\"email\", email);\r",
+							"\tpm.collectionVariables.set(\"password\", password);\r",
+							"\tpm.collectionVariables.set(\"phone_number\", phone_number);\r",
+							"\tpm.collectionVariables.set(\"nid\", nid);\r",
+							"\tpm.collectionVariables.set(\"role\", role);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"\tpm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code name has string\", function() {\r",
+							"\tpm.expect(pm.response.status).to.include(\"Created\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/json\", function () {\r",
+							"\tpm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body response is JSON Object\", function() {\r",
+							"\tpm.response.to.have.jsonBody();\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify JSON response properties\", function() {\r",
+							"\tpm.expect(jsonData).have.property(\"message\");\r",
+							"\tpm.expect(jsonData).have.property(\"user\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response should not be error\", function() {\r",
+							"\tpm.response.to.not.be.error;\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "X-AUTH-SECRET-KEY",
+						"value": "{{secret-key}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"{{name}}\",\r\n    \"email\":\"{{email}}\",\r\n    \"password\":\"{{password}}\",\r\n    \"phone_number\":\"{{phone_number}}\",\r\n    \"nid\":\"{{nid}}\",\r\n    \"role\":\"{{role}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Random User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var nid = _.random(1000000000,9999999999);\r",
+							"var prefix = \"users\";\r",
+							"var randomNumber = _.random(100,999);\r",
+							"var random_email = `${prefix}-${randomNumber}@test.com`;\r",
+							"var role = \"Customer\";\r",
+							"var random_name = pm.variables.replaceIn(\"{{$randomFullName}}\");\r",
+							"var random_pass = pm.variables.replaceIn(\"{{$randomPassword}}\");\r",
+							"var random_phone = pm.variables.replaceIn(\"{{$randomPhoneNumber}}\");\r",
+							"\r",
+							"pm.collectionVariables.set(\"name\", random_name);\r",
+							"pm.collectionVariables.set(\"email\", random_email);\r",
+							"pm.collectionVariables.set(\"password\", random_pass);\r",
+							"pm.collectionVariables.set(\"phone_number\", random_phone);\r",
+							"pm.collectionVariables.set(\"nid\", nid);\r",
+							"pm.collectionVariables.set(\"role\", role);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"\tpm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code name has string\", function() {\r",
+							"\tpm.expect(pm.response.status).to.include(\"Created\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Type header is application/json\", function () {\r",
+							"\tpm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body response is JSON Object\", function() {\r",
+							"\tpm.response.to.have.jsonBody();\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify JSON response properties\", function() {\r",
+							"\tpm.expect(jsonData).have.property(\"message\");\r",
+							"\tpm.expect(jsonData).have.property(\"user\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response should not be error\", function() {\r",
+							"\tpm.response.to.not.be.error;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "X-AUTH-SECRET-KEY",
+						"value": "{{secret-key}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"{{random_name}}\",\r\n    \"email\":\"{{random_email}}\",\r\n    \"password\":\"{{$random_pass}}\",\r\n    \"phone_number\":\"{{$random_phone}}\",\r\n    \"nid\":\"{{nid}}\",\r\n    \"role\":\"{{role}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Duplicate User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 208\", function () {\r",
+							"\tpm.response.to.have.status(208);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Status code name has string\", function() {\r",
+							"\tpm.expect(pm.response.status).to.include(\"Already Reported\");\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check if json properties is message\", function () {\r",
+							"    pm.expect(jsonData).have.property(\"message\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check if user is already exists\", function () {\r",
+							"    pm.expect(jsonData.message).contains(\"User already exists\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "X-AUTH-SECRET-KEY",
+						"value": "{{secret-key}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"User 1 Batch3\",\r\n    \"email\":\"user1b3@grr.la\",\r\n    \"password\":\"12345678\",\r\n    \"phone_number\":\"01502212147\",\r\n    \"nid\":\"987894562\",\r\n    \"role\":\"Customer\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user/create",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"var user = jsonData.users[jsonData.users.length - 1];\r",
+							"// var user = jsonData.users[jsonData.count - 1];\r",
+							"// var user  = jsonData.users[_.random(1, jsonData.users.length)];\r",
+							"var id = user.id;\r",
+							"// console.log(id);\r",
+							"\r",
+							"pm.collectionVariables.set(\"id\", id);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check if display all user list\", function() {\r",
+							"\tpm.expect(jsonData.message).contains(\"User list\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "X-AUTH-SECRET-KEY",
+						"value": "{{secret-key}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/user/list",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify json response with input data\", function() {\r",
+							"\t\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "X-AUTH-SECRET-KEY",
+						"value": "{{secret-key}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"name\": \"Nadim Mahmud\",\r\n\t\"email\": \"userb33448@testing.com\",\r\n\t\"password\": \"12345678\",\r\n\t\"phone_number\": \"774-724-8642\",\r\n\t\"nid\": \"71275406\",\r\n\t\"role\": \"Customer\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user/update/{{id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"update",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User Partially",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check if user is updated\", function () {\r",
+							"    pm.expect(jsonData.message).contains(\"User updated successfully\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check if updated email with input data\", function () {\r",
+							"    pm.expect(jsonData.user.email).to.eql(pm.collectionVariables.get(\"updated_email\"));\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var updated_email = pm.variables.replaceIn(\"{{$randomEmail}}\");\r",
+							"\r",
+							"pm.collectionVariables.set(\"updated_email\", \"updated_email\")"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "X-AUTH-SECRET-KEY",
+						"value": "{{secret-key}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"{{updated_email}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/user/update/{{id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"update",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"\tpm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify JSON data properties\", function() {\r",
+							"\tpm.expect(jsonData).have.property(\"message\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check if User deleted successfully\", function() {\r",
+							"\tpm.expect(jsonData.message).contains(\"User deleted successfully\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Verify data type of response\", function() {\r",
+							"\tpm.response.to.have.jsonBody;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"\tpm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"type": "text"
+					},
+					{
+						"key": "X-AUTH-SECRET-KEY",
+						"value": "{{secret-key}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/user/delete/{{id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"user",
+						"delete",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "secret-key",
+			"value": "ROADTOSDET",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNhbG1hbnNyYWJvbkBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjEyMzQiLCJpYXQiOjE2NDc4MTI0NzcsImV4cCI6MTY0NzgxNDI3N30.jaIUfhglGb0cFmC6DnqBLLCI_sohxIfgcSs92CGsd9o"
+		},
+		{
+			"key": "email",
+			"value": "users-358@test.com"
+		},
+		{
+			"key": "nid",
+			"value": 7100894116
+		},
+		{
+			"key": "role",
+			"value": "Customer"
+		},
+		{
+			"key": "id",
+			"value": 555
+		},
+		{
+			"key": "name",
+			"value": "Wilbert Hane III"
+		},
+		{
+			"key": "password",
+			"value": "aI0uCUq0D9QaqVm"
+		},
+		{
+			"key": "phone_number",
+			"value": "204-452-0248"
+		},
+		{
+			"key": "updated_email",
+			"value": "updated_email"
+		}
+	]
+}

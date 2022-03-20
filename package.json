@@ -1,0 +1,19 @@
+{
+  "name": "user-api-testing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node report.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mdnadim4/users-api-testing.git"
+  },
+  "author": "Nadim Mahmud",
+  "license": "ISC",
+  "dependencies": {
+    "newman": "^5.3.2",
+    "newman-reporter-htmlextra": "^1.22.7"
+  }
+}
